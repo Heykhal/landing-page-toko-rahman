@@ -1,0 +1,106 @@
+<script>
+  fetch('http://localhost:3000/api/products?random=true&limit=3')
+    .then(response => response.json())
+    .then(products => {
+      const productList = document.getElementById('product-list');
+      // 🧯 ERROR HANDLING
+      if (!products || products.length === 0) {
+        productList.innerHTML = `
+          <p class="empty-state">
+            Saat ini belum ada produk yang tersedia.
+          </p>
+        `;
+        return;
+      }
+      products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+
+        card.innerHTML = `
+          <img src="../images/${product.image}" alt="${product.name}">
+          <h3>${product.name}</h3>
+          <p class="price">Rp ${product.price.toLocaleString('id-ID')}</p>
+          <p class="condition">Kondisi: ${product.condition}</p>
+          <a href="product.html?id=${product.id}" class="btn-hero">Lihat Detail</a>
+        `;
+
+        productList.appendChild(card);
+      });
+    })
+    .catch(error => {
+        
+    });
+</script>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <!-- Meta tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- title -->
+  <title>Toko Online</title>
+  <!-- link css -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ================= NAVBAR ================= -->
+ <nav class="navbar">
+  <div class="logo">Toko Rahman</div>
+  <ul class="nav-menu">
+    <li><a href="#home">About</a></li>
+    <li><a href="#produk">Produk</a></li>
+    <li><a href="#kontak">Kontak</a></li>
+    <li><a href="#tentang">Tentang</a></li>
+  </ul>
+</nav>
+<!-- ================= HERO ================= -->
+    <section class="hero" id="home">
+        <h1>Showroom Mobil Terpilih — Klasik, Langka, dan Modern</h1>
+        <p>Katalog mobil dengan informasi jelas: harga, kondisi, dan dokumentasi unit.</p>
+        <p>Ditujukan untuk kolektor dan pecinta otomotif yang tahu apa yang mereka cari.</p>
+        
+        <a href="#produk" class="btn btn-hero">Lihat Katalog Mobil</a>
+    </section>
+    
+   <!-- ================= PRODUK ================= -->
+<section id="produk" class="products">
+  <div class="container">
+    <h2>Katalog Mobil</h2>
+
+    <div id="product-list" class="product-grid">
+      <!-- product card akan di-generate dari JS -->
+    </div>
+  </div>
+</section>
+<!-- ================= FOOTER ================= -->
+<footer class="footer" id="kontak">
+  
+  <!-- ================= TENTANG TOKO ================= -->
+  <section class="about" id="tentang">
+    <div class="about-container">
+      <h2>Tentang Toko</h2>
+      <p>
+        Toko Rahman adalah toko yang menyediakan produk pilihan dengan kualitas terbaik
+        dan harga yang bersahabat. Kami berkomitmen untuk memberikan pengalaman belanja
+        yang nyaman, cepat, dan terpercaya.
+      </p>
+      <p>
+        Website ini dibuat sebagai proyek individu untuk menampilkan konsep landing page
+        toko online yang sederhana, modern, dan responsif.
+      </p>
+    </div>
+  </section>
+  <h4>Kontak</h4>
+  <p>Email: tokorahman@email.com</p>
+
+  <div class="social-links">
+    <a href="#" aria-label="Instagram">Instagram</a>
+    <a href="#" aria-label="WhatsApp">WhatsApp</a>
+    <a href="#" aria-label="GitHub">GitHub</a>
+  </div>
+  
+</footer>
+</body>
+</html>
+
