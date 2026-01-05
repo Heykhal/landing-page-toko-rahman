@@ -326,3 +326,64 @@ html {
 section {
   padding: 80px 0;
 }
+
+.product-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.product-gallery img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.thumbnail-list {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.thumbnail-list img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.product-price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+.progress {
+  background: #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.progress-bar {
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.error-message {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.error-message h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.error-message p {
+  color: #666;
+  margin-bottom: 20px;
+}

@@ -1,51 +1,214 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Detail Produk</title>
-  <link rel="stylesheet" href="css/style.css">
+
+  <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<script>
+  const API_BASE = 'http://localhost:3000/api/products';
 
-  <section class="product-detail container">
-    <img id="product-image" alt="">
-    <h1 id="product-name"></h1>
-    <p id="product-year"></p>
-    <p id="product-condition"></p>
-    <h2 id="product-price"></h2>
+  function getProductId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+  }
 
-    <a href="index.html" class="btn-hero">← Kembali ke katalog</a>
-  </section>
+  async function loadProductDetail() {
+    const productId = getProductId();
 
-  <script>
-  const params = new URLSearchParams(window.location.search);
-  const productId = params.get('id');
+    if (!productId) {
+      showError();
+      return;
+    }
 
-  fetch(`http://localhost:3000/api/products/${productId}`)
-    .then(res => {
-      if (!res.ok) {
+    try {
+      const response = await fetch(`${API_BASE}/${productId}`);
+
+      if (!response.ok) {
         throw new Error('Produk tidak ditemukan');
       }
-      return res.json();
-    })
-    .then(product => {
-      document.getElementById('product-image').src = `../images/${product.image}`;
-      document.getElementById('product-name').textContent = product.name;
-      document.getElementById('product-year').textContent = `Tahun: ${product.year}`;
-      document.getElementById('product-condition').textContent = `Kondisi: ${product.condition}`;
-      document.getElementById('product-price').textContent =
-        `Rp ${product.price.toLocaleString('id-ID')}`;
-    })
-    .catch(() => {
-      document.body.innerHTML = `
-        <section class="container error-page">
-          <h1>Produk tidak ditemukan</h1>
-          <p>Unit yang kamu cari tidak tersedia atau sudah terjual.</p>
-          <a href="index.html" class="btn-hero">Kembali ke katalog</a>
-        </section>
-      `;
+
+      const product = await response.json();
+
+      renderProduct(product);
+
+    } catch (error) {
+      console.error(error);
+      showError();
+    }
+    
+  }
+
+  function renderProduct(product) {
+    // title
+    document.querySelector('.product-title').textContent =
+      `${product.name} (${product.year})`;
+
+    // price
+    document.querySelector('.product-price').textContent =
+      `Rp ${Number(product.price).toLocaleString('id-ID')}`;
+
+    // description
+    document.querySelector('.description-section p').textContent =
+      product.description || '-';
+
+    // status badge
+    const badge = document.querySelector('.badge');
+    badge.textContent = product.status;
+    badge.className = `badge ${product.status}`;
+
+    // conditions
+    setProgress('Mesin', product.engine_condition);
+    setProgress('Body', product.body_condition);
+    setProgress('Interior', product.interior_condition);
+
+    // documents
+    document.querySelector('.document-section ul').innerHTML = `
+      <li>STNK: ${product.stnk_status}</li>
+      <li>BPKB: ${product.bpkb_status}</li>
+      <li>Pajak: ${product.tax_status}</li>
+      <li>${product.tax_note || ''}</li>
+    `;
+
+    // images
+    renderImages(product.images);
+  }
+
+  function setProgress(label, value) {
+    const items = document.querySelectorAll('.condition-item');
+
+    items.forEach(item => {
+      if (item.querySelector('span').textContent === label) {
+        const bar = item.querySelector('.progress-bar');
+        bar.style.width = value + '%';
+        bar.textContent = value + '%';
+      }
     });
+  }
+
+  function renderImages(images) {
+    if (!images || images.length === 0) return;
+
+    const mainImage = document.querySelector('.main-image');
+    const thumbnails = document.querySelector('.thumbnail-list');
+
+    thumbnails.innerHTML = '';
+
+    // set primary image
+    const primary = images.find(img => img.is_primary) || images[0];
+    mainImage.src = primary.image_url;
+
+    images.forEach(img => {
+      const thumb = document.createElement('img');
+      thumb.src = img.image_url;
+
+      thumb.addEventListener('click', () => {
+        mainImage.src = img.image_url;
+      });
+
+      thumbnails.appendChild(thumb);
+    });
+  }
+
+  function showError() {
+    document.querySelector('.product-detail').style.display = 'none';
+    document.getElementById('error-message').style.display = 'block';
+  }
+
 </script>
+<body>
+
+  <!-- HEADER / NAV (reuse dari index.html kalau ada) -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">Showroom</a>
+    </div>
+  </header>
+
+  <div id="error-message" class="error-message" style="display:none;">
+  <h2>Produk tidak ditemukan</h2>
+  <p>Unit yang kamu cari tidak tersedia atau sudah terjual.</p>
+  <a href="index.html" class="btn-primary">Kembali ke katalog</a>
+</div>
+
+  <!-- PRODUCT DETAIL -->
+  <main class="container product-detail">
+
+    <!-- GALLERY -->
+    <section class="product-gallery">
+      <img 
+        src="images/bmw320.webp" 
+        alt="BMW 320i E36" 
+        class="main-image"
+      />
+
+      <div class="thumbnail-list">
+        <img src="images/bmw320.webp" alt="">
+        <img src="images/bmw320-interior.jpg" alt="">
+        <img src="images/bmw320-engine.jpg" alt="">
+      </div>
+    </section>
+
+    <!-- INFO -->
+    <section class="product-info">
+      <h1 class="product-title">BMW 320i E36 (1996)</h1>
+      <p class="product-price">Rp 275.000.000</p>
+
+      <span class="badge available">Available</span>
+
+      <!-- KONDISI -->
+      <div class="condition-section">
+        <h3>Kondisi Mobil</h3>
+
+        <div class="condition-item">
+          <span>Mesin</span>
+          <div class="progress">
+            <div class="progress-bar" style="width:90%">90%</div>
+          </div>
+        </div>
+
+        <div class="condition-item">
+          <span>Body</span>
+          <div class="progress">
+            <div class="progress-bar" style="width:85%">85%</div>
+          </div>
+        </div>
+
+        <div class="condition-item">
+          <span>Interior</span>
+          <div class="progress">
+            <div class="progress-bar" style="width:88%">88%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOKUMEN -->
+      <div class="document-section">
+        <h3>Surat & Pajak</h3>
+        <ul>
+          <li>STNK: Ada</li>
+          <li>BPKB: Ada</li>
+          <li>Pajak: Mati (3 tahun)</li>
+        </ul>
+      </div>
+
+      <!-- DESKRIPSI -->
+      <div class="description-section">
+        <h3>Deskripsi</h3>
+        <p>
+          BMW E36 kondisi terawat, mesin halus, cocok untuk kolektor
+          atau pemakaian harian.
+        </p>
+      </div>
+    </section>
+
+  </main>
 
 </body>
 </html>
+
+<script>
+  loadProductDetail();
+</script>

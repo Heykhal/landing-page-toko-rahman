@@ -105,3 +105,20 @@ Frontend dan backend sudah terhubung dan siap dikembangkan ke tahap berikutnya.
 
 👤 Author
 Haffidh Rahman
+
+## 🚗 Features (v2)
+- Dynamic product listing
+- Product detail page
+- Image gallery
+- Vehicle condition indicator
+- Document & tax status
+- Error handling (404 / empty state)
+
+## 🧱 Tech Stack
+- HTML, CSS, Vanilla JS
+- Node.js (Express)
+- MySQL
+- XAMPP (local dev)
+
+## 🔒 Status
+This project is currently frozen at **v2 (public MVP)**.
